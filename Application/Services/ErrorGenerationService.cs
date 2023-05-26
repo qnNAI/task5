@@ -6,12 +6,16 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common.Attributes;
+using Application.Common.Contracts.Services;
+using Application.Extensions;
 using Application.Models.User;
+using Bogus;
 
 namespace Application.Services {
-    internal class ErrorGenerationService {
+    internal class ErrorGenerationService : IErrorGenerationService {
 
-        public void GenerateErrors(IEnumerable<UserDto> users, Random rng, double errorProbability, string locale) {
+        public void GenerateErrors(IEnumerable<UserDto> users, int seed, double errorProbability, string locale) {
+            var rng = new Random(seed);
             var errorAmount = _GetErrorNumber(rng, errorProbability);
 
             foreach(var user in users) {
@@ -22,8 +26,8 @@ namespace Application.Services {
 
         private void _GenerateErrors(UserDto user, Random rng, int errorAmount, string locale) {
             var props = user.GetType()
-                .GetProperties(BindingFlags.Public)
-                .Where(x => x.GetCustomAttribute<SkipErrorGenerationAttribute>() != null)
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(x => x.GetCustomAttribute<SkipErrorGenerationAttribute>() == null)
                 .Where(x => x.PropertyType == typeof(string))
                 .ToList();
 
@@ -37,6 +41,13 @@ namespace Application.Services {
             var errorProp = props[errorPropIndex];
 
             var propValue = errorProp.GetValue(user)?.ToString() ?? string.Empty;
+            _GenerateErrorForProperty(user, rng, locale, errorProp, propValue);
+        }
+
+        private void _GenerateErrorForProperty(UserDto user, Random rng, string locale, PropertyInfo errorProp, string propValue) {
+            if(string.IsNullOrEmpty(propValue))
+                return;
+
             var errorNumber = Enum.GetValues(typeof(Errors)).Length;
             var error = (Errors)rng.Next(errorNumber);
 
@@ -59,13 +70,21 @@ namespace Application.Services {
         }
 
         private string _InsertRandom(string propValue, Random rng, string locale) {
-            CultureInfo cultureInfo = CultureInfo.CurrentCulture;
-            //cultureInfo.TextInfo.
-            return null;
+            var insertIndex = rng.Next(propValue.Length);
+            var isLetter = rng.Next(2) == 1;
+
+            Randomizer.Seed = rng;
+            var faker = new Faker(locale.GetFakerLocale());
+
+            return propValue.Insert(insertIndex, isLetter ? faker.Lorem.Letter() : faker.Random.Digits(1)[0].ToString());
         }
 
         private string _SwapRandom(string propValue, Random rng) {
-            throw new NotImplementedException();
+            var chars = propValue.ToCharArray();
+
+            var firstIndex = rng.Next(chars.Length - 1);
+            (chars[firstIndex], chars[firstIndex + 1]) = (chars[firstIndex + 1], chars[firstIndex]);
+            return new string(chars);
         }
 
         private static int _GetErrorNumber(Random rng, double errorProbability) {

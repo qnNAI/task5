@@ -23,6 +23,7 @@ namespace Application {
             services.AddScoped<IMapper, Mapper>();
 
             services.AddScoped<IUserGenerationService, UserGenerationService>();
+            services.AddScoped<IErrorGenerationService, ErrorGenerationService>();
 
             return services;
         }

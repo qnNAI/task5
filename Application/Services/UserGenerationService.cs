@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Contracts.Contexts;
 using Application.Common.Contracts.Services;
+using Application.Extensions;
 using Application.Models.Common;
 using Application.Models.User;
 using Bogus;
@@ -17,7 +18,6 @@ namespace Application.Services {
     internal class UserGenerationService : IUserGenerationService {
         private readonly IApplicationDbContext _context;
         private readonly Dictionary<string, Func<GetUsersArgs, Random, List<UserDto>, CancellationToken, Task>> _middleNameProviders;
-        private readonly Dictionary<string, string> _cultureToFakerLocaleMap;
 
         private const string MALE_PREFIX = "M";
         private const string FEMALE_PREFIX = "F";
@@ -29,12 +29,6 @@ namespace Application.Services {
                 { "ru-RU", _SetStoredMiddleNamesAsync },
                 { "pl-PL", _SetGeneratedMiddleNamesAsync },
                 { "en-US", _SetGeneratedMiddleNamesAsync }
-            };
-
-            _cultureToFakerLocaleMap = new() {
-                { "ru-RU", "ru" },
-                { "pl-PL", "pl" },
-                { "en-US",  "en_US" }
             };
         }
 
@@ -50,7 +44,7 @@ namespace Application.Services {
         private Task<List<UserDto>> _GenerateUsersAsync(GetUsersArgs args, Random rng, CancellationToken cancellationToken) {
             Randomizer.Seed = rng;
 
-            var faker = new Faker<UserDto>(_cultureToFakerLocaleMap[args.Locale])
+            var faker = new Faker<UserDto>(args.Locale.GetFakerLocale())
                             .RuleFor(src => src.Id, _ => {
                                 var bytes = new byte[16];
                                 rng.NextBytes(bytes);
@@ -96,7 +90,7 @@ namespace Application.Services {
         private Task _SetGeneratedMiddleNamesAsync(GetUsersArgs args, Random rng, List<UserDto> generated, CancellationToken cancellationToken = default) {
             Randomizer.Seed = rng;
 
-            var faker = new Faker(_cultureToFakerLocaleMap[args.Locale]);
+            var faker = new Faker(args.Locale.GetFakerLocale());
             var existenceProbability = (float)rng.NextDouble();
 
             return Task.Run(() => {
