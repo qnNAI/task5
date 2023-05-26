@@ -1,0 +1,26 @@
+﻿@using Application.Models.User;
+@model IEnumerable<UserDto>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <table class="table table-hover table-striped">
+        <thead class="table-dark">
+
+        </thead>
+        <tbody class="table-group-divider">
+            @foreach(var user in Model) {
+                <tr>
+                    <th>@user.Id</th>
+                    <th>@user.FirstName</th>
+                    <th>@user.MiddleName</th>
+                    <th>@user.LastName</th>
+                    <th>@user.Address</th>
+                    <th>@user.Phone</th>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
