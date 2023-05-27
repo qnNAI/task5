@@ -58,7 +58,7 @@ function nextPage() {
         document.getElementById('usersTable').getAttribute('sendUrl'),
         'tBody',
         document.getElementById('regionBtn').getAttribute('locale'),
-        document.getElementById('errorInput'.value),
+        document.getElementById('errorInput').value,
         document.getElementById('seedInput').value,
         page.currentPage,
         page.pageSize);
