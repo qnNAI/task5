@@ -1,26 +1,53 @@
-﻿@using Application.Models.User;
-@model IEnumerable<UserDto>
+﻿@model IEnumerable<RegionViewModel>
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Users";
 }
 
-<div class="text-center mb-5">
-    <table class="table table-hover table-striped">
-        <thead class="table-dark">
-
-        </thead>
-        <tbody class="table-group-divider">
-            @foreach(var user in Model) {
-                <tr>
-                    <th>@user.Id</th>
-                    <th>@user.FirstName</th>
-                    <th>@user.MiddleName</th>
-                    <th>@user.LastName</th>
-                    <th>@user.Address</th>
-                    <th>@user.Phone</th>
-                </tr>
+<div class="d-flex flex-row align-items-center">
+    <div class="dropdown me-4">
+        <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="regionBtn" locale="@Model.FirstOrDefault()?.Locale">
+            @Model.FirstOrDefault()?.Country
+        </button>
+        <ul class="dropdown-menu">
+            @foreach(var region in Model) {
+                <li><a class="dropdown-item" onclick="reloadUsersNewLocale('@region.Locale', '@region.Country')" href="#">@region.Country</a></li>
             }
+        </ul>
+    </div>
+    <div class="me-3">
+        <label for="errorRange" class="form-label">Error range (0-10):</label>
+        <input type="range" class="form-range" min="0" max="10" step="0.25" id="errorRange">
+    </div>
+    <span class="me-4" id="errorRangeValue">
+    </span>
+    <label for="errorInput" class="form-label me-2 mb-0">Errors:</label>
+    <input type="number" class="form-control me-3" placeholder="0-1000" id="errorInput" max="1000" min="0"/>
+  
+    <input type="number" class="form-control me-2" placeholder="seed" id="seedInput" />
+    <button type="button" class="btn btn-outline-danger" id="randomBtn" onclick="randomSeed(); handleSeedInput()">Random</button>
+</div>
+
+
+<div class="text-center mb-5">
+    <table class="table table-hover table-striped" sendUrl="@Url.Action("GetUsers")" id="usersTable">
+        <thead class="table-dark">
+            <tr>
+                <th>1</th>
+                <th>2</th>
+                <th>3</th>
+                <th>4</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider" id="tBody">
+
         </tbody>
     </table>
+
+    <div class="d-flex flex-row justify-content-center w-100">
+        <div class="spinner-border text-success" role="status" id="loader">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 </div>
+

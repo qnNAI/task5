@@ -24,6 +24,7 @@ namespace Application {
 
             services.AddScoped<IUserGenerationService, UserGenerationService>();
             services.AddScoped<IErrorGenerationService, ErrorGenerationService>();
+            services.AddTransient<IFullNameFormatService, FullNameFormatService>();
 
             return services;
         }

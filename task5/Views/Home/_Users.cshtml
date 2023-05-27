@@ -1,0 +1,19 @@
+﻿@using Application.Common.Contracts.Services;
+@using Application.Models.User;
+
+@model IEnumerable<UserDto>
+@inject IFullNameFormatService fullnameFormatService
+
+@{
+    var locale = ViewData["Locale"]?.ToString() ?? string.Empty;
+}
+
+
+@foreach(var user in Model) {
+    <tr>
+        <th>@user.Id</th>
+        <th>@fullnameFormatService.GetFullNameFormatted(user.FirstName, user.MiddleName, user.LastName, locale)</th>
+        <th>@user.Address</th>
+        <th>@user.Phone</th>
+    </tr>
+}

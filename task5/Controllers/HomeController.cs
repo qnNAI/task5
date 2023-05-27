@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Application.Common.Contracts.Services;
+using Application.Models.Common;
 using Microsoft.AspNetCore.Mvc;
 using task5.Models;
 
@@ -13,17 +14,45 @@ namespace task5.Controllers {
             _errorGenerationService = errorGenerationService;
         }
 
-        public async Task<IActionResult> Index(CancellationToken cancellationToken) {
-            var users = await _userGenerationService.GetUsers(new Application.Models.Common.GetUsersArgs {
-                Locale = "pl-PL",
-                Page = 1,
-                PageSize = 20,
-                Seed = 69420
+        [HttpGet]
+        public IActionResult Index() {
+            var regions = new List<RegionViewModel> {
+                new RegionViewModel {
+                    Country = "United States",
+                    Locale = "en-US"
+                },
+                new RegionViewModel {
+                    Country = "Russia",
+                    Locale = "ru-RU"
+                },
+                new RegionViewModel {
+                    Country = "Poland",
+                    Locale = "pl-PL"
+                }
+            };
+
+            return View(regions);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUsers(string locale, double errors, int seed, int page = 1, int pageSize = 20, CancellationToken cancellationToken = default) {
+            var users = await _userGenerationService.GetUsers(new GetUsersArgs {
+                Locale = locale,
+                Page = page,
+                PageSize = pageSize,
+                Seed = seed
             }, cancellationToken);
 
-            _errorGenerationService.GenerateErrors(users, 69420, 0.8, "pl-PL");
+            _errorGenerationService.GenerateErrors(new GenerateErrorsArgs {
+                Users = users,
+                Seed = seed,
+                ErrorProbability = errors,
+                Locale = locale
+            });
+            await Task.Delay(500);
 
-            return View(users);
+            ViewData["Locale"] = locale;
+            return PartialView("_Users", users);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

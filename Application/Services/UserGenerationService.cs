@@ -39,12 +39,12 @@ namespace Application.Services {
             Randomizer.Seed = rng;
 
             var faker = new Faker<UserDto>(args.Locale.GetFakerLocale())
-                            .RuleFor(src => src.Id, _ =>  _BuildId(rng))
-                            .RuleFor(src => src.FirstName, faker => faker.Name.FirstName())
-                            .RuleFor(src => src.LastName, faker => faker.Name.LastName())
-                            .RuleFor(src => src.Gender, faker => faker.Person.Gender)
-                            .RuleFor(src => src.Address, this._BuildAddress)
-                            .RuleFor(src => src.Phone, faker => this._BuildPhone(faker, args));
+                .RuleFor(src => src.Gender, faker => faker.PickRandom<Gender>())
+                .RuleFor(src => src.Id, _ =>  _BuildId(rng))
+                .RuleFor(src => src.FirstName, (faker, user) => faker.Name.FirstName(user.Gender))
+                .RuleFor(src => src.LastName, (faker, user) => faker.Name.LastName(user.Gender))
+                .RuleFor(src => src.Address, this._BuildAddress)
+                .RuleFor(src => src.Phone, faker => this._BuildPhone(faker, args));
 
             return Task.Run(() => faker.Generate(args.PageSize), cancellationToken);
         }

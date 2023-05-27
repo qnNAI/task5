@@ -8,13 +8,12 @@ using static Bogus.DataSets.Name;
 namespace Application.Extensions {
     public static class FakerExtensions {
 
-        private static readonly Dictionary<string, string> _fakerLocalesMap = new() {
-            { "ru-RU", "ru" },
-            { "pl-PL", "pl" },
-            { "en-US",  "en_US" }
+        public static string GetFakerLocale(this string locale) => locale switch {
+            "ru-RU" => "ru",
+            "pl-PL" => "pl",
+            "en-US" => "en_US",
+            _ => string.Empty
         };
-
-        public static string GetFakerLocale(this string locale) => _fakerLocalesMap.ContainsKey(locale) ? _fakerLocalesMap[locale] : string.Empty;
 
         public static string GetGenderPrefix(this Gender gender) => gender switch {
             Gender.Male => "M",

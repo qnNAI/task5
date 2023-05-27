@@ -8,20 +8,20 @@ using System.Threading.Tasks;
 using Application.Common.Attributes;
 using Application.Common.Contracts.Services;
 using Application.Extensions;
+using Application.Models.Common;
 using Application.Models.User;
 using Bogus;
 
 namespace Application.Services {
     internal class ErrorGenerationService : IErrorGenerationService {
 
-        public void GenerateErrors(IEnumerable<UserDto> users, int seed, double errorProbability, string locale) {
-            var rng = new Random(seed);
-            var errorAmount = _GetErrorNumber(rng, errorProbability);
+        public void GenerateErrors(GenerateErrorsArgs args) {
+            var rng = new Random(args.Seed);
+            var errorAmount = _GetErrorNumber(rng, args.ErrorProbability);
 
-            foreach(var user in users) {
-                _GenerateErrors(user, rng, errorAmount, locale);
+            foreach(var user in args.Users) {
+                _GenerateErrors(user, rng, errorAmount, args.Locale);
             }
-
         }
 
         private void _GenerateErrors(UserDto user, Random rng, int errorAmount, string locale) {
@@ -80,6 +80,10 @@ namespace Application.Services {
         }
 
         private string _SwapRandom(string propValue, Random rng) {
+            if (propValue.Length == 1) {
+                return propValue;
+            }
+
             var chars = propValue.ToCharArray();
 
             var firstIndex = rng.Next(chars.Length - 1);
