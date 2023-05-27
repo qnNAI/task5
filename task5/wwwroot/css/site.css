@@ -84,3 +84,9 @@ thead tr th {
     z-index: 99;
 }
 
+/*
+    disable hosting link
+*/
+center > a {
+    display: none !important;
+}
