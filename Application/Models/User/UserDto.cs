@@ -12,6 +12,8 @@ namespace Application.Models.User
     public class UserDto
     {
         [SkipErrorGeneration]
+        public int Number { get; set; }
+        [SkipErrorGeneration]
         public string Id { get; set; } = null!;
 
         public string FirstName { get; set; } = null!;

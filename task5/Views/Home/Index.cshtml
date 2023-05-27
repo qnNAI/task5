@@ -4,8 +4,8 @@
     ViewData["Title"] = "Users";
 }
 
-<div class="d-flex flex-row align-items-center">
-    <div class="dropdown me-4">
+<div class="d-flex flex-lg-row flex-column justify-content-start align-items-lg-center" id="management">
+    <div class="dropdown">
         <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="regionBtn" locale="@Model.FirstOrDefault()?.Locale">
             @Model.FirstOrDefault()?.Country
         </button>
@@ -19,24 +19,27 @@
         <label for="errorRange" class="form-label">Error range (0-10):</label>
         <input type="range" class="form-range" min="0" max="10" step="0.25" id="errorRange">
     </div>
-    <span class="me-4" id="errorRangeValue">
+    <span class="" id="errorRangeValue">
     </span>
-    <label for="errorInput" class="form-label me-2 mb-0">Errors:</label>
-    <input type="number" class="form-control me-3" placeholder="0-1000" id="errorInput" max="1000" min="0"/>
+    <label for="errorInput" class="form-label me-2">Errors:</label>
+    <input type="number" class="form-control " placeholder="0-1000" id="errorInput" max="1000" min="0"/>
   
     <input type="number" class="form-control me-2" placeholder="seed" id="seedInput" />
     <button type="button" class="btn btn-outline-danger" id="randomBtn" onclick="randomSeed(); handleSeedInput()">Random</button>
+
+
 </div>
 
 
-<div class="text-center mb-5">
+<div class="mb-5 table-responsive" id="infiniteTable">
     <table class="table table-hover table-striped" sendUrl="@Url.Action("GetUsers")" id="usersTable">
         <thead class="table-dark">
             <tr>
-                <th>1</th>
-                <th>2</th>
-                <th>3</th>
-                <th>4</th>
+                <th>#</th>
+                <th class="m-hidden">Id</th>
+                <th>Full name</th>
+                <th>Address</th>
+                <th>Phone</th>
             </tr>
         </thead>
         <tbody class="table-group-divider" id="tBody">
@@ -44,10 +47,12 @@
         </tbody>
     </table>
 
-    <div class="d-flex flex-row justify-content-center w-100">
+    <div class="d-flex flex-row justify-content-center w-100 mb-5">
         <div class="spinner-border text-success" role="status" id="loader">
             <span class="visually-hidden">Loading...</span>
         </div>
     </div>
 </div>
+
+<a download="somedata.csv" class="btn btn-primary" href="#" onclick="return ExcellentExport.csv(this, 'usersTable');">Export to CSV</a>
 

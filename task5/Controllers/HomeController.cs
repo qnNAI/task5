@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Application.Common.Contracts.Services;
 using Application.Models.Common;
+using Application.Models.User;
 using Microsoft.AspNetCore.Mvc;
 using task5.Models;
 
@@ -49,10 +50,24 @@ namespace task5.Controllers {
                 ErrorProbability = errors,
                 Locale = locale
             });
-            await Task.Delay(500);
+
+            _SetUserNumbers(page, users);
 
             ViewData["Locale"] = locale;
             return PartialView("_Users", users);
+        }
+
+        private void _SetUserNumbers(int page, List<UserDto> users) {
+            var counter = 1;
+            if(page != 1) {
+                counter = (int)(TempData["Counter"] ?? 1);
+                TempData["Counter"] = counter;
+            }
+
+            foreach(var user in users) {
+                user.Number = counter++;
+            }
+            TempData["Counter"] = counter;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

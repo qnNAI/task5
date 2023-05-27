@@ -2,14 +2,19 @@
     $('#loader').hide();
     loadUsersCurrentSettings();
 
-    window.addEventListener("scroll", handleInfiniteScroll);
-
     setupErrorInput();
 
     let seed = document.getElementById('seedInput');
     seed.oninput = handleSeedInput;
+
+    addInfiniteScroll();
     
 }, false);
+
+function addInfiniteScroll() {
+    let tableWrapper = document.getElementById('infiniteTable');
+    tableWrapper.addEventListener("scroll", handleTableScroll);
+}
 
 function setupErrorInput() {
     let slider = document.getElementById("errorRange");
@@ -27,9 +32,6 @@ function setupErrorInput() {
 }
 
 function reloadUsersNewLocale(locale, country) {
-    let body = document.getElementById('tBody');
-    body.innerHTML = "";
-
     let regionBtn = document.getElementById('regionBtn');
     regionBtn.innerText = country;
     regionBtn.setAttribute('locale', locale)
@@ -112,20 +114,6 @@ function randomSeed() {
     seedInput.value = Math.floor(Math.random() * 100_000_000);
 }
 
-let tableScrollTimer = {
-    flag: false
-}
-const throttle = (callback, time, timer) => {
-    if (timer.flag) return;
-
-    timer.flag = true;
-
-    setTimeout(() => {
-        callback();
-        timer.flag = false;
-    }, time);
-};
-
 let errorFieldTimer;
 function handleErrorInput() {
     clearTimeout(errorFieldTimer);
@@ -156,3 +144,16 @@ function handleSeedInput() {
 
     }, 1000);
 }
+
+let tableScrollTimer;
+function handleTableScroll() {
+    clearTimeout(tableScrollTimer);
+    tableScrollTimer = setTimeout(function () {
+        let tableWrapper = document.getElementById('infiniteTable');
+        if (Math.abs(tableWrapper.scrollHeight - tableWrapper.clientHeight - tableWrapper.scrollTop) < 50 && tableWrapper.scrollTop != 0) {
+            nextPage();
+        }
+
+    }, 500);
+}
+

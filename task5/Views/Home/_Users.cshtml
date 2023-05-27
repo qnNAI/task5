@@ -11,7 +11,8 @@
 
 @foreach(var user in Model) {
     <tr>
-        <th>@user.Id</th>
+        <th>@user.Number</th>
+        <th class="m-hidden">@user.Id</th>
         <th>@fullnameFormatService.GetFullNameFormatted(user.FirstName, user.MiddleName, user.LastName, locale)</th>
         <th>@user.Address</th>
         <th>@user.Phone</th>
