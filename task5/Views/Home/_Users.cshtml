@@ -11,10 +11,10 @@
 
 @foreach(var user in Model) {
     <tr>
-        <th>@user.Number</th>
-        <th class="m-hidden">@user.Id</th>
-        <th>@fullnameFormatService.GetFullNameFormatted(user.FirstName, user.MiddleName, user.LastName, locale)</th>
-        <th>@user.Address</th>
-        <th>@user.Phone</th>
+        <td>@user.Number</td>
+        <td class="m-hidden">@user.Id</td>
+        <td>@fullnameFormatService.GetFullNameFormatted(user.FirstName, user.MiddleName, user.LastName, locale)</td>
+        <td>@user.Address</td>
+        <td>@user.Phone</td>
     </tr>
 }
