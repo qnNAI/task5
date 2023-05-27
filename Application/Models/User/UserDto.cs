@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common.Attributes;
+using static Bogus.DataSets.Name;
 
 namespace Application.Models.User
 {
@@ -18,7 +19,7 @@ namespace Application.Models.User
         public string LastName { get; set; } = null!;
 
         [SkipErrorGeneration]
-        public string Gender { get; set; } = null!;
+        public Gender Gender { get; set; }
         public string Address { get; set; } = null!;
         public string Phone { get; set; } = null!;
     }

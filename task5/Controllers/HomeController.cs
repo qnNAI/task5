@@ -21,9 +21,7 @@ namespace task5.Controllers {
                 Seed = 69420
             }, cancellationToken);
 
-
-            _errorGenerationService.GenerateErrors(users, 69420, 10.5, "pl-PL");
-
+            _errorGenerationService.GenerateErrors(users, 69420, 0.8, "pl-PL");
 
             return View(users);
         }
